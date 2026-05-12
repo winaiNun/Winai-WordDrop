@@ -1,0 +1,12 @@
+[
+  { "id": 1,  "word": "APPLE", "image": "", "emoji": "🍎", "category": "ผลไม้" },
+  { "id": 2,  "word": "MANGO", "image": "", "emoji": "🥭", "category": "ผลไม้" },
+  { "id": 3,  "word": "FISH",  "image": "", "emoji": "🐟", "category": "สัตว์" },
+  { "id": 4,  "word": "CAT",   "image": "", "emoji": "🐱", "category": "สัตว์" },
+  { "id": 5,  "word": "DOG",   "image": "", "emoji": "🐶", "category": "สัตว์" },
+  { "id": 6,  "word": "SUN",   "image": "", "emoji": "☀️", "category": "ธรรมชาติ" },
+  { "id": 7,  "word": "STAR",  "image": "", "emoji": "⭐", "category": "ธรรมชาติ" },
+  { "id": 8,  "word": "MOON",  "image": "", "emoji": "🌙", "category": "ธรรมชาติ" },
+  { "id": 9,  "word": "BOOK",  "image": "", "emoji": "📖", "category": "ของใช้" },
+  { "id": 10, "word": "CAKE",  "image": "", "emoji": "🎂", "category": "อาหาร" }
+]

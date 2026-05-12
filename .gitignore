@@ -1,0 +1,35 @@
+# Dependencies
+node_modules
+
+# Nuxt build
+.nuxt
+.output
+dist
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Claude Code local settings
+.claude/
+
+# Editor
+.vscode/*
+!.vscode/extensions.json
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# PWA icons README (ไม่ต้องขึ้น git)
+public/icons/README.md
+public/images/README.md
