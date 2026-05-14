@@ -7,34 +7,36 @@ export interface VocabItem {
   image: string
   emoji?: string
   category: string
+  translation?: string   // คำแปลภาษาไทย
 }
 
 const STORAGE_KEY  = 'winai-vocab-v1'
 const TOPIC_KEY    = 'winai-topic'
 const PLAYMODE_KEY = 'winai-playmode'
+const CASEMODE_KEY = 'winai-case-mode'
 const CATS_KEY     = 'winai-active-cats'
+const APPMODE_KEY  = 'winai-app-mode'
+const TEST_DUR_KEY = 'winai-test-duration'
 
 // ── Module-level singletons ───────────────────────────────────────────────────
-const list        = ref<VocabItem[]>([])
-const topic       = ref('')
-const playMode    = ref<'random' | 'sequence'>('sequence')
-// null  = all categories active (no filter)
-// []    = none selected → game shows warning
-// [...] = specific categories selected
-const activeCats  = ref<string[] | null>(null)
+const list         = ref<VocabItem[]>([])
+const topic        = ref('')
+const playMode     = ref<'random' | 'sequence'>('sequence')
+const caseMode     = ref<'upper' | 'lower'>('upper')
+const appMode      = ref<'learn' | 'test'>('learn')
+const testDuration = ref(60) // seconds
+const activeCats   = ref<string[] | null>(null)
 let _ready = false
 
 // ── Derived state ─────────────────────────────────────────────────────────────
 const categories = computed(() => [...new Set(list.value.map(i => i.category))])
 
-/** Vocab filtered by selected categories */
 const filteredVocabList = computed(() => {
   if (activeCats.value === null) return list.value
   if (activeCats.value.length === 0) return []
   return list.value.filter(i => activeCats.value!.includes(i.category))
 })
 
-/** Per-category word count */
 const categoryCounts = computed(() => {
   const map: Record<string, number> = {}
   list.value.forEach(i => { map[i.category] = (map[i.category] ?? 0) + 1 })
@@ -58,9 +60,11 @@ export function useVocab() {
     }
     topic.value    = localStorage.getItem(TOPIC_KEY)    ?? ''
     playMode.value = (localStorage.getItem(PLAYMODE_KEY) as 'random' | 'sequence') ?? 'sequence'
+    caseMode.value  = (localStorage.getItem(CASEMODE_KEY) as 'upper' | 'lower') ?? 'upper'
+    appMode.value   = (localStorage.getItem(APPMODE_KEY)  as 'learn' | 'test')  ?? 'learn'
+    testDuration.value = parseInt(localStorage.getItem(TEST_DUR_KEY) ?? '60') || 60
     try {
       const rawCats = localStorage.getItem(CATS_KEY)
-      // stored 'null' string or missing key → all selected (null)
       activeCats.value = (rawCats === null || rawCats === 'null') ? null : JSON.parse(rawCats)
     } catch {
       activeCats.value = null
@@ -76,52 +80,46 @@ export function useVocab() {
     topic.value = t
     if (typeof window !== 'undefined') localStorage.setItem(TOPIC_KEY, t)
   }
-
   function setPlayMode(m: 'random' | 'sequence') {
     playMode.value = m
     if (typeof window !== 'undefined') localStorage.setItem(PLAYMODE_KEY, m)
   }
+  function setCaseMode(m: 'upper' | 'lower') {
+    caseMode.value = m
+    if (typeof window !== 'undefined') localStorage.setItem(CASEMODE_KEY, m)
+  }
+  function setAppMode(m: 'learn' | 'test') {
+    appMode.value = m
+    if (typeof window !== 'undefined') localStorage.setItem(APPMODE_KEY, m)
+  }
+  function setTestDuration(s: number) {
+    testDuration.value = s
+    if (typeof window !== 'undefined') localStorage.setItem(TEST_DUR_KEY, String(s))
+  }
 
-  /** True when a category is included in the active set (null = all active) */
   function isCatActive(cat: string) {
     if (activeCats.value === null) return true
     return activeCats.value.includes(cat)
   }
-
   function persistCats() {
     if (typeof window === 'undefined') return
     if (activeCats.value === null) localStorage.removeItem(CATS_KEY)
     else localStorage.setItem(CATS_KEY, JSON.stringify(activeCats.value))
   }
-
   function toggleCategory(cat: string) {
     const allCats = categories.value
-    // Expand null → all cats before toggling
     const current = activeCats.value === null ? [...allCats] : [...activeCats.value]
     const idx = current.indexOf(cat)
-
     if (idx !== -1) {
-      // Deselect — allow going to empty (shows warning in game)
       activeCats.value = current.filter(c => c !== cat)
     } else {
       const next = [...current, cat]
-      // All categories selected → simplify back to null
       activeCats.value = next.length === allCats.length ? null : next
     }
     persistCats()
   }
-
-  /** Select all categories (null = no filter) */
-  function selectAllCategories() {
-    activeCats.value = null
-    persistCats()
-  }
-
-  /** Deselect all — game will show a warning */
-  function deselectAllCategories() {
-    activeCats.value = []
-    persistCats()
-  }
+  function selectAllCategories()   { activeCats.value = null; persistCats() }
+  function deselectAllCategories() { activeCats.value = [];   persistCats() }
 
   function add(item: Omit<VocabItem, 'id'>) {
     list.value.push({ ...item, id: Date.now() }); persist()
@@ -141,20 +139,10 @@ export function useVocab() {
   }
 
   return {
-    vocabList: list,
-    filteredVocabList,
-    categories,
-    categoryCounts,
-    activeCats,
-    topic,
-    playMode,
-    init,
-    setTopic,
-    setPlayMode,
-    isCatActive,
-    toggleCategory,
-    selectAllCategories,
-    deselectAllCategories,
+    vocabList: list, filteredVocabList, categories, categoryCounts, activeCats,
+    topic, playMode, caseMode, appMode, testDuration,
+    init, setTopic, setPlayMode, setCaseMode, setAppMode, setTestDuration,
+    isCatActive, toggleCategory, selectAllCategories, deselectAllCategories,
     add, update, remove, reset, replaceAll,
   }
 }
