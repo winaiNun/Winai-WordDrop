@@ -26,6 +26,20 @@ export default defineNuxtConfig({
           href: 'https://fonts.googleapis.com/css2?family=Mali:wght@400;600;700&family=Itim&display=swap',
         },
       ],
+      script: [
+        {
+          children: `
+            if ('serviceWorker' in navigator) {
+              window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                  .then(function(reg) { console.log('SW registered!', reg); })
+                  .catch(function(err) { console.error('SW failed!', err); });
+              });
+            }
+          `,
+          type: 'text/javascript',
+        }
+      ]
     },
   },
 
