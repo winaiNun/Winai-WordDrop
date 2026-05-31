@@ -70,6 +70,7 @@ export default defineNuxtConfig({
     workbox: {
       navigateFallback: '/',
       globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff2}'],
+      globIgnores: ['**/404.html', '**/200.html'],
       runtimeCaching: [
         {
           urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
