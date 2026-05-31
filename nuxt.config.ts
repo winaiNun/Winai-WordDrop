@@ -16,6 +16,7 @@ export default defineNuxtConfig({
         { name: 'theme-color', content: '#7c3aed' },
       ],
       link: [
+        { rel: 'manifest', href: '/manifest.webmanifest' },
         { rel: 'icon',             type: 'image/png', href: '/icons/icon-192x192.png' },
         { rel: 'apple-touch-icon', type: 'image/png', href: '/icons/icon-180x180.png' },
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
@@ -30,6 +31,7 @@ export default defineNuxtConfig({
 
   pwa: {
     registerType: 'autoUpdate',
+    injectRegister: 'inline',
     manifest: {
       name: 'Winai WordDrop',
       short_name: 'WordDrop',
