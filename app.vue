@@ -1,5 +1,6 @@
 <template>
   <div class="relative min-h-screen font-mali flex flex-col">
+    <VitePwaManifest />
     <ParticleBackground />
     <div class="relative flex-1" style="z-index:1">
       <NuxtPage />
